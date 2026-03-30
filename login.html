@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RAJGym – Login</title>
+  <link rel="stylesheet" href="Style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    /* CSS Variables - Add if not in Style.css */
+    :root {
+      --dark: #0a0a0a;
+      --dark2: #0f0f0f;
+      --dark3: #1a1a1a;
+      --black: #000000;
+      --green: #95C11E;
+      --green-dark: #7fa318;
+      --green-subtle: rgba(149, 193, 30, 0.1);
+      --border-green: rgba(149, 193, 30, 0.3);
+      --border: #2a2a2a;
+      --text: #ffffff;
+      --text-muted: #888888;
+      --text-dim: #666666;
+      --radius: 8px;
+      --radius-lg: 16px;
+      --transition: all 0.3s ease;
+      --nav-height: 80px;
+    }
+
+    html, body { 
+      height: 100%;
+      font-family: 'Montserrat', sans-serif;
+      background: var(--dark);
+      color: var(--text);
+    }
+
+    /* Navigation Styles */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-height);
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 5%;
+      z-index: 1000;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-size: 1.8rem;
+      font-weight: 900;
+      text-decoration: none;
+      color: var(--green);
+      letter-spacing: -1px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--green);
+    }
+    .nav-cta {
+      background: var(--green);
+      color: #000 !important;
+      padding: 0.5rem 1.2rem;
+      border-radius: var(--radius);
+    }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .hamburger span {
+      width: 25px;
+      height: 2px;
+      background: var(--text);
+      transition: var(--transition);
+    }
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: var(--nav-height);
+      left: 0;
+      right: 0;
+      background: var(--dark2);
+      padding: 2rem;
+      flex-direction: column;
+      gap: 1rem;
+      z-index: 999;
+      border-bottom: 1px solid var(--border);
+    }
+    .mobile-menu a {
+      text-decoration: none;
+      color: var(--text-muted);
+      padding: 0.5rem;
+    }
+    .mobile-menu a.active {
+      color: var(--green);
+    }
+    .mobile-cta {
+      background: var(--green);
+      color: #000 !important;
+      text-align: center;
+      border-radius: var(--radius);
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .mobile-menu.show { display: flex; }
+    }
+
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+    .input-wrap {
+      position: relative;
+    }
+    .input-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      pointer-events: none;
+    }
+    .form-input {
+      width: 100%;
+      padding: 0.85rem 1rem 0.85rem 2.5rem;
+      background: var(--dark3);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: var(--green);
+      background: #1a1a1a;
+    }
+    .form-input.input-error {
+      border-color: #ff4444;
+    }
+    .toggle-pw {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0;
+      font-size: 1rem;
+    }
+    .toggle-pw:hover {
+      color: var(--green);
+    }
+
+    /* Error messages */
+    .error-msg {
+      font-size: 0.7rem;
+      color: #ff4444;
+      margin-top: 0.3rem;
+      display: none;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .error-msg.show {
+      display: flex;
+    }
+    .error-msg i {
+      font-size: 0.65rem;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1.5rem;
+      font-weight: 700;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      font-family: 'Montserrat', sans-serif;
+    }
+    .btn-primary {
+      background: var(--green);
+      color: #000;
+    }
+    .btn-primary:hover {
+      background: #7fa318;
+      transform: translateY(-2px);
+    }
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-full {
+      width: 100%;
+    }
+    .btn-lg {
+      padding: 1rem;
+      font-size: 1rem;
+    }
+
+    /* Spinner */
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(0,0,0,0.2);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Toast notification */
+    .toast-notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius);
+      color: white;
+      z-index: 10000;
+      animation: slideIn 0.3s ease;
+      font-weight: 500;
+    }
+    .toast-success {
+      background: #10b981;
+    }
+    .toast-error {
+      background: #ef4444;
+    }
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+
+    /* ── Split Layout ── */
+    .auth-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+      padding-top: var(--nav-height);
+    }
+
+    /* Left decorative panel */
+    .auth-panel {
+      background: var(--dark);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 3rem;
+    }
+    .auth-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 30% 30%, rgba(149,193,30,0.15), transparent 65%),
+        linear-gradient(135deg, #0a0a0a, #111);
+    }
+    .auth-panel-bg-text {
+      position: absolute;
+      top: 50%;
+      left: -2rem;
+      transform: translateY(-50%);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.025);
+      line-height: 0.9;
+      pointer-events: none;
+      user-select: none;
+    }
+    .auth-panel-content { position: relative; z-index: 2; }
+    .auth-panel-tag {
+      display: inline-block;
+      background: var(--green);
+      color: #000;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 0.3rem 0.8rem;
+      border-radius: 2rem;
+      margin-bottom: 1.2rem;
+    }
+    .auth-panel-content h2 {
+      font-size: clamp(2.5rem, 4vw, 3.8rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+    .auth-panel-content h2 span { color: var(--green); }
+    .auth-panel-content p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      max-width: 340px;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    .panel-stats {
+      display: flex;
+      gap: 2rem;
+    }
+    .panel-stat .num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--green);
+      line-height: 1;
+    }
+    .panel-stat .lbl {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Green vertical accent line */
+    .auth-panel::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 3px; height: 100%;
+      background: linear-gradient(to bottom, transparent, var(--green), transparent);
+      opacity: 0.5;
+    }
+
+    /* Right form panel */
+    .auth-form-panel {
+      background: var(--black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+
+    .auth-form-box {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .auth-header {
+      margin-bottom: 2.5rem;
+    }
+    .auth-header .welcome-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 0.4rem;
+    }
+    .auth-header h1 {
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .auth-header p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* Remember / Forgot row */
+    .row-util {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      font-size: 0.82rem;
+    }
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+    }
+    .checkbox-label input { accent-color: var(--green); }
+    .forgot-link { 
+      color: var(--text-muted); 
+      transition: var(--transition);
+      text-decoration: none;
+    }
+    .forgot-link:hover { color: var(--green); }
+
+    .auth-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+    }
+    .auth-footer a { 
+      color: var(--green); 
+      font-weight: 700; 
+      text-decoration: none;
+    }
+    .auth-footer a:hover { text-decoration: underline; }
+
+    /* Divider */
+    .or-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin: 1.5rem 0;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .or-divider::before, .or-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .auth-wrapper { grid-template-columns: 1fr; }
+      .auth-panel { display: none; }
+      .auth-form-panel { min-height: calc(100vh - var(--nav-height)); }
+    }
+    @media (max-width: 540px) {
+      .auth-form-panel { padding: 2rem 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="index.html" class="nav-logo">RAJGym</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="index.html#training">Training</a>
+    <a href="contact.html">Contact</a>
+    <a href="login.html" class="active">Login</a>
+    <a href="register.html" class="nav-cta">Join Now</a>
+  </div>
+  <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Home</a>
+  <a href="index.html#training">Training</a>
+  <a href="contact.html">Contact</a>
+  <a href="login.html" class="active">Login</a>
+  <a href="register.html" class="mobile-cta">Join Now</a>
+</div>
+
+<!-- PAGE -->
+<div class="auth-wrapper">
+
+  <!-- Left Panel -->
+  <div class="auth-panel">
+    <div class="auth-panel-bg-text">RAJ<br>GYM</div>
+    <div class="auth-panel-content">
+      <span class="auth-panel-tag">🏋️ Member Area</span>
+      <h2>Your Strongest<br><span>Self Awaits</span></h2>
+      <p>Sign in to access your personalized dashboard, workout tracker, training plans, and connect with your coaches.</p>
+      <div class="panel-stats">
+        <div class="panel-stat"><div class="num">1.5k+</div><div class="lbl">Members</div></div>
+        <div class="panel-stat"><div class="num">50+</div><div class="lbl">Trainers</div></div>
+        <div class="panel-stat"><div class="num">98%</div><div class="lbl">Success</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Form Panel -->
+  <div class="auth-form-panel">
+    <div class="auth-form-box">
+      <div class="auth-header">
+        <div class="welcome-label">Welcome Back</div>
+        <h1>Sign In to<br>RAJGym</h1>
+        <p>Enter your credentials to access your fitness dashboard.</p>
+      </div>
+
+      <div class="or-divider">Login with email</div>
+
+      <form id="loginForm" novalidate>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address</label>
+          <div class="input-wrap">
+            <i class="fa-regular fa-envelope input-icon"></i>
+            <input type="email" id="email" class="form-input" placeholder="you@example.com" autocomplete="email"/>
+          </div>
+          <div class="error-msg" id="emailErr">
+            <i class="fa-solid fa-circle-exclamation"></i> Please enter a valid email address.
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-lock input-icon"></i>
+            <input type="password" id="password" class="form-input" placeholder="Enter your password" autocomplete="current-password"/>
+            <button type="button" class="toggle-pw" data-target="password" aria-label="Toggle password visibility">
+              <i class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+          <div class="error-msg" id="pwErr">
+            <i class="fa-solid fa-circle-exclamation"></i> Password must be at least 6 characters.
+          </div>
+        </div>
+
+        <!-- Remember / Forgot -->
+        <div class="row-util">
+          <label class="checkbox-label">
+            <input type="checkbox" id="rememberMe"/> Remember me
+          </label>
+          <a href="#" class="forgot-link">Forgot password?</a>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn btn-primary btn-full btn-lg" id="loginBtn">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> Login
+        </button>
+
+        <p class="auth-footer">
+          Don't have an account? <a href="register.html">Create one →</a>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+// Login form JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // API Base URL - Auto-detect environment
+    const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:5000/api'
+        : 'https://rajgym-11si.onrender.com/api';
+    
+    console.log('🌐 Login API_BASE:', API_BASE);
+    
+    // Password toggle functionality
+    document.querySelectorAll('.toggle-pw').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            const icon = this.querySelector('i');
+            if (input) {
+                const isHidden = input.type === 'password';
+                input.type = isHidden ? 'text' : 'password';
+                icon.className = isHidden ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
+            }
+        });
+    });
+    
+    // Toast notification function
+    function showToast(message, type = 'success') {
+        const existingToast = document.querySelector('.toast-notification');
+        if (existingToast) existingToast.remove();
+        
+        const toast = document.createElement('div');
+        toast.className = `toast-notification toast-${type}`;
+        toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i><span style="margin-left: 8px;">${message}</span>`;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+    
+    // Add slideOut animation
+    if (!document.querySelector('#slideOutStyle')) {
+        const style = document.createElement('style');
+        style.id = 'slideOutStyle';
+        style.textContent = `@keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }`;
+        document.head.appendChild(style);
+    }
+    
+    // Helper functions
+    function showFieldError(inputId, errId) {
+        const input = document.getElementById(inputId);
+        const err = document.getElementById(errId);
+        if (input) input.classList.add('input-error');
+        if (err) err.classList.add('show');
+    }
+    
+    function clearFieldError(inputId, errId) {
+        const input = document.getElementById(inputId);
+        const err = document.getElementById(errId);
+        if (input) input.classList.remove('input-error');
+        if (err) err.classList.remove('show');
+    }
+    
+    function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+    
+    function setLoading(btn, isLoading, label) {
+        if (!btn) return;
+        btn.disabled = isLoading;
+        btn.innerHTML = isLoading
+            ? `<span class="spinner"></span> ${label}`
+            : label;
+    }
+    
+    // Login form handler
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            console.log('🔑 Login form submitted');
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const rememberMe = document.getElementById('rememberMe')?.checked || false;
+            let valid = true;
+            
+            // Validate email
+            if (!email || !isValidEmail(email)) {
+                showFieldError('email', 'emailErr');
+                valid = false;
+            } else {
+                clearFieldError('email', 'emailErr');
+            }
+            
+            // Validate password
+            if (!password || password.length < 6) {
+                showFieldError('password', 'pwErr');
+                valid = false;
+            } else {
+                clearFieldError('password', 'pwErr');
+            }
+            
+            if (!valid) return;
+            
+            // Show loading
+            const btn = document.getElementById('loginBtn');
+            setLoading(btn, true, 'Signing in...');
+            
+            try {
+                const res = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await res.json();
+                console.log('📥 Login response:', data);
+                
+                if (res.ok && data.success) {
+                    // Save token and user info
+                    localStorage.setItem('rajgym_token', data.token);
+                    localStorage.setItem('rajgym_user', JSON.stringify(data.user));
+                    
+                    // Save remember me preference
+                    if (rememberMe) {
+                        localStorage.setItem('rajgym_remember', email);
+                    } else {
+                        localStorage.removeItem('rajgym_remember');
+                    }
+                    
+                    showToast('Welcome back, ' + data.user.name + '! 💪', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1200);
+                } else {
+                    showToast(data.message || 'Invalid credentials. Please try again.', 'error');
+                }
+            } catch (err) {
+                console.error('❌ Login error:', err);
+                showToast('Network error. Please check if server is running.', 'error');
+            } finally {
+                setLoading(btn, false, '<i class="fa-solid fa-arrow-right-to-bracket"></i> Login');
+            }
+        });
+    }
+    
+    // Live validation - clear errors on input
+    const inputs = ['email', 'password'];
+    inputs.forEach(inputId => {
+        const input = document.getElementById(inputId);
+        if (input) {
+            input.addEventListener('input', function() {
+                const errId = inputId === 'email' ? 'emailErr' : 'pwErr';
+                clearFieldError(inputId, errId);
+            });
+        }
+    });
+    
+    // Check if already logged in
+    const token = localStorage.getItem('rajgym_token');
+    const currentPath = window.location.pathname;
+    const isLoginPage = currentPath.includes('login.html') || currentPath.includes('login');
+    
+    if (token && isLoginPage) {
+        window.location.href = 'dashboard.html';
+    }
+    
+    // Load remembered email
+    const rememberedEmail = localStorage.getItem('rajgym_remember');
+    if (rememberedEmail && document.getElementById('email')) {
+        document.getElementById('email').value = rememberedEmail;
+        const rememberCheckbox = document.getElementById('rememberMe');
+        if (rememberCheckbox) rememberCheckbox.checked = true;
+    }
+    
+    // Mobile menu toggle
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    if (hamburger && mobileMenu) {
+        hamburger.addEventListener('click', () => {
+            mobileMenu.classList.toggle('show');
+        });
+    }
+});
+</script>
+</body>
+</html>

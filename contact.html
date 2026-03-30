@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RAJGym – Contact Us</title>
+  <link rel="stylesheet" href="Style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    /* Hero */
+    .contact-hero {
+      padding-top: var(--nav-height);
+      min-height: 40vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: radial-gradient(ellipse 70% 60% at 50% 0%, rgba(149,193,30,0.12), transparent 70%);
+      position: relative;
+      overflow: hidden;
+    }
+    .contact-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(149,193,30,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(149,193,30,0.04) 1px, transparent 1px);
+      background-size: 55px 55px;
+    }
+    .contact-hero-inner {
+      position: relative;
+      z-index: 1;
+      padding: 3rem 1.5rem;
+    }
+    .contact-hero h1 {
+      font-size: clamp(2.5rem, 7vw, 5rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 0.8rem;
+    }
+    .contact-hero h1 span { color: var(--green); }
+    .contact-hero p {
+      font-size: clamp(0.9rem, 2vw, 1rem);
+      color: var(--text-muted);
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* Main contact section */
+    .contact-section {
+      background: var(--dark);
+      padding: 4rem 0 5rem;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    /* ── INFO COLUMN ── */
+    .info-col { display: flex; flex-direction: column; gap: 1.2rem; }
+
+    .info-card {
+      background: var(--dark2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.8rem;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .info-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--green);
+      border-radius: 3px 0 0 3px;
+    }
+    .info-card:hover {
+      border-color: var(--border-green);
+      transform: translateY(-3px);
+    }
+
+    .info-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.9rem;
+      margin-bottom: 0.9rem;
+    }
+    .info-item:last-child { margin-bottom: 0; }
+
+    .info-icon-box {
+      width: 38px; height: 38px;
+      background: var(--green-subtle);
+      border: 1px solid var(--border-green);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--green);
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .info-item-text strong {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 0.2rem;
+    }
+    .info-item-text span,
+    .info-item-text a {
+      font-size: 0.9rem;
+      color: var(--text);
+      transition: var(--transition);
+      line-height: 1.5;
+    }
+    .info-item-text a:hover { color: var(--green); }
+
+    /* Hours table */
+    .hours-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.45rem 0;
+      font-size: 0.85rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .hours-row:last-child { border-bottom: none; }
+    .hours-row .day { color: var(--text-muted); font-weight: 600; }
+    .hours-row .time { color: var(--text); font-weight: 700; }
+    .hours-row.today .day { color: var(--green); }
+    .hours-row.today .time { color: var(--green); }
+    .live-dot {
+      display: inline-block;
+      width: 6px; height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      margin-right: 5px;
+      animation: pulseDot 1.5s infinite;
+    }
+    @keyframes pulseDot { 0%,100%{opacity:1;transform:scale(1);}50%{opacity:.3;transform:scale(.6);} }
+
+    /* Social links */
+    .social-grid {
+      display: flex;
+      gap: 0.65rem;
+    }
+    .social-link {
+      width: 40px; height: 40px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+    .social-link:hover {
+      background: var(--green-subtle);
+      border-color: var(--border-green);
+      color: var(--green);
+      transform: translateY(-2px);
+    }
+
+    /* ── FORM COLUMN ── */
+    .form-card-contact {
+      background: var(--dark2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .form-card-contact::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+    }
+
+    .form-card-header { margin-bottom: 2rem; }
+    .form-card-header h2 {
+      font-size: 1.9rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+    .form-card-header h2 span { color: var(--green); }
+    .form-card-header p { font-size: 0.87rem; color: var(--text-muted); line-height: 1.6; }
+
+    /* Subject chips */
+    .subject-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .chip {
+      padding: 0.38rem 0.9rem;
+      border: 1.5px solid var(--border);
+      border-radius: 2rem;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .chip:hover, .chip.active {
+      border-color: var(--green);
+      background: var(--green-subtle);
+      color: var(--green);
+    }
+
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.2rem; }
+
+    .char-count {
+      text-align: right;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      margin-top: 0.3rem;
+    }
+
+    /* Success banner */
+    .success-banner {
+      display: none;
+      background: var(--green-subtle);
+      border: 1.5px solid var(--border-green);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.5rem;
+      margin-top: 1.2rem;
+      color: var(--green);
+      font-size: 0.88rem;
+      font-weight: 600;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .success-banner.show { display: flex; }
+    .success-banner i { font-size: 1.3rem; flex-shrink: 0; }
+
+    /* Map */
+    .map-section { padding: 0 0 4rem; background: var(--dark); }
+    .map-box {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--dark2);
+      height: 280px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      transition: var(--transition);
+    }
+    .map-box:hover { border-color: var(--border-green); }
+    .map-box i { font-size: 2.5rem; color: var(--green); }
+    .map-box a { color: var(--green); font-size: 0.82rem; font-weight: 700; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .contact-grid { grid-template-columns: 1fr; }
+      .info-col { display: grid; grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .info-col { grid-template-columns: 1fr; }
+      .form-row-2 { grid-template-columns: 1fr; }
+      .form-card-contact { padding: 1.5rem 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="index.html" class="nav-logo">RAJGym</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="index.html#training">Training</a>
+    <a href="contact.html" class="active">Contact</a>
+    <a href="login.html">Login</a>
+    <a href="register.html" class="nav-cta">Join Now</a>
+  </div>
+  <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Home</a>
+  <a href="index.html#training">Training</a>
+  <a href="contact.html" class="active">Contact</a>
+  <a href="login.html">Login</a>
+  <a href="register.html" class="mobile-cta">Join Now</a>
+</div>
+
+<!-- HERO -->
+<section class="contact-hero">
+  <div class="contact-hero-inner">
+    <span class="section-badge">📍 Reach Out</span>
+    <h1>Get in <span>Touch</span></h1>
+    <p>Questions about plans, trainers, or schedules? We respond within 24 hours — guaranteed.</p>
+  </div>
+</section>
+
+<!-- CONTACT SECTION -->
+<section class="contact-section">
+  <div class="container">
+    <div class="contact-grid">
+
+      <!-- Info Column -->
+      <div class="info-col reveal">
+
+        <!-- Contact Details -->
+        <div class="info-card">
+          <div class="info-card-title"><i class="fa-solid fa-address-book"></i> Contact Details</div>
+          <div class="info-item">
+            <div class="info-icon-box"><i class="fa-solid fa-location-dot"></i></div>
+            <div class="info-item-text">
+              <strong>Address</strong>
+              <span>123 Fitness Street, Model Town,<br>New Delhi – 110009, India</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon-box"><i class="fa-solid fa-phone"></i></div>
+            <div class="info-item-text">
+              <strong>Phone</strong>
+              <a href="tel:+919876543210">+91 98765 43210</a>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon-box"><i class="fa-solid fa-envelope"></i></div>
+            <div class="info-item-text">
+              <strong>Email</strong>
+              <a href="mailto:info@rajgym.in">info@rajgym.in</a>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon-box"><i class="fa-brands fa-whatsapp"></i></div>
+            <div class="info-item-text">
+              <strong>WhatsApp</strong>
+              <a href="https://wa.me/919876543210">Chat with us</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Opening Hours -->
+        <div class="info-card">
+          <div class="info-card-title"><i class="fa-regular fa-clock"></i> Opening Hours</div>
+          <div class="hours-row today">
+            <span class="day"><span class="live-dot"></span>Mon – Fri</span>
+            <span class="time">5:00 AM – 10:00 PM</span>
+          </div>
+          <div class="hours-row">
+            <span class="day">Saturday</span>
+            <span class="time">6:00 AM – 9:00 PM</span>
+          </div>
+          <div class="hours-row">
+            <span class="day">Sunday</span>
+            <span class="time">7:00 AM – 6:00 PM</span>
+          </div>
+          <div class="hours-row">
+            <span class="day">Public Holidays</span>
+            <span class="time">8:00 AM – 4:00 PM</span>
+          </div>
+        </div>
+
+        <!-- Social Links -->
+        <div class="info-card">
+          <div class="info-card-title"><i class="fa-solid fa-share-nodes"></i> Follow RAJGym</div>
+          <p style="font-size:.83rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.6;">
+            Workouts, challenges, transformations, and motivation — follow us for daily fitness content.
+          </p>
+          <div class="social-grid">
+            <a href="#" class="social-link"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" class="social-link"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="#" class="social-link"><i class="fa-brands fa-youtube"></i></a>
+            <a href="#" class="social-link"><i class="fa-brands fa-x-twitter"></i></a>
+          </div>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="info-card">
+          <div class="info-card-title"><i class="fa-solid fa-bolt"></i> Quick Actions</div>
+          <a href="register.html" class="btn btn-primary btn-full" style="margin-bottom:.7rem;">
+            <i class="fa-solid fa-user-plus"></i> Join as Member
+          </a>
+          <a href="dashboard.html" class="btn btn-ghost btn-full">
+            <i class="fa-solid fa-dumbbell"></i> Workout Tracker
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Form Column -->
+      <div class="form-card-contact reveal reveal-delay-2">
+        <div class="form-card-header">
+          <h2>Send a <span>Message</span></h2>
+          <p>Fill in the form and our team will get back to you as soon as possible.</p>
+        </div>
+
+        <!-- Subject chips -->
+        <div class="subject-chips" id="chips">
+          <button type="button" class="chip active" data-val="General Enquiry">General Enquiry</button>
+          <button type="button" class="chip" data-val="Membership Plans">Membership Plans</button>
+          <button type="button" class="chip" data-val="Personal Training">Personal Training</button>
+          <button type="button" class="chip" data-val="Schedule a Visit">Schedule a Visit</button>
+          <button type="button" class="chip" data-val="Feedback">Feedback</button>
+        </div>
+
+        <form id="contactForm" novalidate>
+          <input type="hidden" id="subject" value="General Enquiry"/>
+
+          <div class="form-row-2">
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">Full Name *</label>
+              <div class="input-wrap">
+                <i class="fa-solid fa-user input-icon"></i>
+                <input type="text" id="name" class="form-input" placeholder="John Doe"/>
+              </div>
+              <div class="error-msg" id="nameErr"><i class="fa-solid fa-circle-exclamation"></i> Name is required.</div>
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">Email Address *</label>
+              <div class="input-wrap">
+                <i class="fa-regular fa-envelope input-icon"></i>
+                <input type="email" id="ctEmail" class="form-input" placeholder="you@example.com"/>
+              </div>
+              <div class="error-msg" id="ctEmailErr"><i class="fa-solid fa-circle-exclamation"></i> Enter a valid email.</div>
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">Phone Number</label>
+              <div class="input-wrap">
+                <i class="fa-solid fa-phone input-icon"></i>
+                <input type="tel" id="ctPhone" class="form-input" placeholder="+91 98765 43210"/>
+              </div>
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">Subject</label>
+              <div class="input-wrap">
+                <i class="fa-solid fa-tag input-icon"></i>
+                <input type="text" id="subjectDisplay" class="form-input" readonly value="General Enquiry" style="cursor:pointer;"/>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Message *</label>
+            <div class="input-wrap">
+              <i class="fa-regular fa-comment input-icon" style="top:1rem;transform:none;"></i>
+              <textarea id="message" class="form-input form-textarea" placeholder="Tell us how we can help you..." maxlength="500"></textarea>
+            </div>
+            <div class="char-count"><span id="charCount">0</span> / 500</div>
+            <div class="error-msg" id="messageErr"><i class="fa-solid fa-circle-exclamation"></i> Please write a message (min 20 characters).</div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full btn-lg" id="contactBtn">
+            <i class="fa-solid fa-paper-plane"></i> Send Message
+          </button>
+
+          <div class="success-banner" id="successBanner">
+            <i class="fa-solid fa-circle-check"></i>
+            <div>
+              <strong>Message sent successfully!</strong><br>
+              <span style="font-weight:400;font-size:.82rem;">We'll reply within 24 hours. Check your inbox for confirmation.</span>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- MAP -->
+<section class="map-section">
+  <div class="container">
+    <h2 class="section-title reveal" style="text-align:left;font-size:1.8rem;margin-bottom:1rem;">
+      Find <span>Our Gym</span>
+    </h2>
+    <div class="map-box">
+      <i class="fa-solid fa-map-location-dot"></i>
+      <span>123 Fitness Street, Model Town, New Delhi – 110009</span>
+      <a href="https://maps.google.com" target="_blank">
+        Open in Google Maps →
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <span class="footer-logo">RAJGym</span>
+        <p class="footer-desc">Delhi's premier fitness destination. Building bodies and habits since 2014.</p>
+      </div>
+      <div>
+        <div class="footer-heading">Quick Links</div>
+        <div class="footer-links">
+          <a href="index.html">Home</a>
+          <a href="index.html#training">Training</a>
+          <a href="index.html#membership">Plans</a>
+          <a href="login.html">Login</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Contact</div>
+        <div class="footer-links">
+          <a href="tel:+919876543210">+91 98765 43210</a>
+          <a href="mailto:info@rajgym.in">info@rajgym.in</a>
+          <a href="#">New Delhi, India</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Follow Us</div>
+        <div class="footer-socials">
+          <a href="#" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="social-icon"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="social-icon"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 RAJGym. All rights reserved.</span>
+      <span><a href="#">Privacy</a> · <a href="#">Terms</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="Main.js"></script>
+<script src="Contact.js"></script>
+</body>
+</html>

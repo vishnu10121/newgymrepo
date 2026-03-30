@@ -1,0 +1,9 @@
+{
+  "routes": [
+    { "src": "/", "dest": "/GYMWEBSITE/index.html" },
+    { "src": "/login", "dest": "/GYMWEBSITE/login.html" },
+    { "src": "/register", "dest": "/GYMWEBSITE/register.html" },
+    { "src": "/dashboard", "dest": "/GYMWEBSITE/dashboard.html" },
+    { "src": "/contact", "dest": "/GYMWEBSITE/contact.html" }
+  ]
+}
