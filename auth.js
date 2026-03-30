@@ -9,7 +9,7 @@
 // auth.js - Update API_BASE to your deployed URL
 const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   ? 'http://localhost:5000/api'  // Local development
-  : 'https://rajgym-1.onrender.com/api';  // ✅ Your deployed backend
+  : 'https://newgymrepo.onrender.com/api';  // ✅ Your deployed backend
 // ── Wait for DOM ──────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
 
