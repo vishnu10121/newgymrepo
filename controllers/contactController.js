@@ -6,136 +6,126 @@
 const Contact = require('../models/Contact');
 const sendEmail = require("../config/email");
 
-// ──────────────────────────────────────────────────────────────
-// @route   POST /api/contact
-// @desc    Save a new contact form submission + send email
-// @access  Public
-// ──────────────────────────────────────────────────────────────
 const submitContact = async (req, res) => {
-
   try {
-
     const { name, email, phone, subject, message } = req.body;
 
-    // validation
+    console.log('📝 Contact form submission from:', email);
+
+    // Validation
     if (!name || !email || !message) {
-
       return res.status(400).json({
-
         success: false,
         message: "Name, email and message are required"
-
       });
-
     }
 
-    if (message.trim().length < 5) {
-
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
       return res.status(400).json({
-
         success: false,
-        message: "Message must be at least 5 characters"
-
+        message: "Please enter a valid email address"
       });
-
     }
 
-    // save in mongodb
-    const contact = await Contact.create({
+    if (message.trim().length < 10) {
+      return res.status(400).json({
+        success: false,
+        message: "Message must be at least 10 characters"
+      });
+    }
 
+    // Save in MongoDB
+    const contact = await Contact.create({
       name: name.trim(),
       email: email.toLowerCase().trim(),
       phone: phone || "",
-      subject: subject || "General enquiry",
+      subject: subject || "General Enquiry",
       message: message.trim()
-
     });
 
+    console.log('✅ Contact saved to MongoDB, ID:', contact._id);
 
-    // send email notification
-    await sendEmail(
-
-      "New Message from RAJGym Contact Form",
-
-      `
-New Contact Message:
+    // Send email notification (don't await)
+    try {
+      await sendEmail(
+        "New Message from RAJGym Contact Form",
+        `
+========================================
+NEW CONTACT FORM SUBMISSION
+========================================
 
 Name: ${name}
-
 Email: ${email}
-
-Phone: ${phone}
-
-Subject: ${subject}
+Phone: ${phone || 'Not provided'}
+Subject: ${subject || 'General Enquiry'}
 
 Message:
 ${message}
-      `
 
-    );
-
+----------------------------------------
+Submitted on: ${new Date().toLocaleString()}
+Contact ID: ${contact._id}
+========================================
+        `
+      );
+      console.log('✅ Email sent successfully');
+    } catch (emailErr) {
+      console.error('⚠️ Email send failed:', emailErr.message);
+    }
 
     res.status(201).json({
-
       success: true,
-      message: "Message sent successfully",
-      data: contact
-
+      message: "Message sent successfully! We'll get back to you within 24 hours.",
+      data: {
+        id: contact._id,
+        name: contact.name,
+        email: contact.email,
+        subject: contact.subject
+      }
     });
-
 
   } catch (error) {
-
-    console.log("Contact error:", error.message);
-
+    console.error('❌ Contact error:', error.message);
+    
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(e => e.message);
+      return res.status(400).json({
+        success: false,
+        message: messages.join(', ')
+      });
+    }
+    
     res.status(500).json({
-
       success: false,
-      message: "Server error"
-
+      message: "Server error. Please try again later."
     });
-
   }
-
 };
 
-
-
-// ──────────────────────────────────────────────────────────────
-// @route   GET /api/contact
-// @desc    Get all contact messages
-// ──────────────────────────────────────────────────────────────
 const getContacts = async (req, res) => {
-
   try {
-
     const contacts = await Contact.find().sort({ createdAt: -1 });
-
+    
+    console.log(`📋 Retrieved ${contacts.length} contact messages`);
+    
     res.status(200).json({
-
       success: true,
       total: contacts.length,
       contacts
-
     });
-
+    
   } catch (error) {
-
+    console.error('❌ Get contacts error:', error.message);
     res.status(500).json({
-
       success: false,
       message: "Server error"
-
     });
-
   }
-
 };
 
-
 module.exports = {
-
   submitContact,
   getContacts
-
 };

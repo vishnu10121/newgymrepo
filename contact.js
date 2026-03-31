@@ -4,7 +4,10 @@
             API submission, Success/Error states
    ============================================================ */
 
-const API_BASE = 'https://rajgym-11si.onrender.com';
+// API Base URL - Auto-detect environment
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:5000/api'
+    : '/api';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -32,6 +35,22 @@ document.addEventListener('DOMContentLoaded', () => {
       charCount.textContent = len;
       charCount.style.color = len > 450 ? '#ff9900' : '';
     });
+  }
+
+  // ── Toast Function ───────────────────────────────────────────
+  function showToast(message, type = 'success') {
+    const existingToast = document.querySelector('.toast-notification');
+    if (existingToast) existingToast.remove();
+    
+    const toast = document.createElement('div');
+    toast.className = `toast-notification toast-${type}`;
+    toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i><span style="margin-left: 8px;">${message}</span>`;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
   }
 
   // ── Contact Form Submit ───────────────────────────────────────
@@ -90,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       const data = await res.json();
 
-      if (res.ok) {
+      if (res.ok && data.success) {
         showSuccess();
         contactForm.reset();
         if (charCount) charCount.textContent = '0';
@@ -103,11 +122,8 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast(data.message || 'Failed to send. Please try again.', 'error');
       }
     } catch (err) {
-      // Demo mode — no backend connected
-      console.warn('Demo mode (no backend):', err.message);
-      showSuccess();
-      contactForm.reset();
-      if (charCount) charCount.textContent = '0';
+      console.error('Contact error:', err);
+      showToast('Network error. Please try again later.', 'error');
     } finally {
       btn.disabled  = false;
       btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send Message';
@@ -120,9 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
       banner.classList.add('show');
       setTimeout(() => banner.classList.remove('show'), 7000);
     }
-    if (typeof showToast === 'function') {
-      showToast('Message sent! We\'ll reply within 24 hours. 📩', 'success');
-    }
+    showToast('Message sent! We\'ll reply within 24 hours. 📩', 'success');
   }
 
   function showErr(inputId, errId) {
@@ -143,86 +157,3 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 });
-// ============================================================
-// RAJGym — models/Contact.js
-// MongoDB Contact Schema & Model
-// ============================================================
-
-const mongoose = require('mongoose');
-
-const contactSchema = new mongoose.Schema(
-  {
-    name: {
-      type:     String,
-      required: [true, 'Name is required'],
-      trim:     true,
-      minlength: [2, 'Name must be at least 2 characters'],
-    },
-
-    email: {
-      type:     String,
-      required: [true, 'Email is required'],
-      trim:     true,
-      lowercase: true,
-      match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email address'],
-    },
-
-    phone: {
-      type:    String,
-      trim:    true,
-      default: '',
-    },
-
-    subject: {
-      type:    String,
-      default: 'General Enquiry',
-      trim:    true,
-    },
-
-    message: {
-      type:      String,
-      required:  [true, 'Message is required'],
-      minlength: [10, 'Message must be at least 10 characters'],
-      maxlength: [1000, 'Message cannot exceed 1000 characters'],
-      trim:      true,
-    },
-
-    // Track if admin has read / replied to this message
-    isRead: {
-      type:    Boolean,
-      default: false,
-    },
-
-    date: {
-      type:    Date,
-      default: Date.now,
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
-
-module.exports = mongoose.model('Contact', contactSchema);
-// ============================================================
-// RAJGym — routes/contact.js
-// Contact form routes
-// ============================================================
-
-const express = require('express');
-const router  = express.Router();
-
-const { submitContact, getContacts } = require('../controllers/contactController');
-const { protect } = require('../middleware/auth');
-
-// @route   POST /api/contact
-// @desc    Submit a contact form message
-// @access  Public
-router.post('/', submitContact);
-
-// @route   GET /api/contact
-// @desc    Get all contact submissions (admin)
-// @access  Private
-router.get('/', protect, getContacts);
-
-module.exports = router;

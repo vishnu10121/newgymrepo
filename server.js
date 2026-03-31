@@ -3,8 +3,9 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const path = require('path');  // ✅ Add this
+const path = require('path');
 const authRoutes = require('./routes/auth');
+const contactRoutes = require('./routes/contact');  // ✅ Add this
 
 const app = express();
 
@@ -19,8 +20,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ==================== SERVE STATIC FILES (FRONTEND) ====================
-// Serve HTML files from root directory
+// ==================== SERVE STATIC FILES ====================
 app.use(express.static(path.join(__dirname, '/')));
 
 // ==================== MONGODB CONNECTION ====================
@@ -37,11 +37,10 @@ mongoose.connect(MONGODB_URI)
   });
 
 // ==================== ROUTES ====================
-// API routes first
 app.use('/api', authRoutes);
+app.use('/api/contact', contactRoutes);  // ✅ Add contact routes
 
 // ==================== FRONTEND ROUTES ====================
-// Serve specific HTML pages
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
@@ -62,7 +61,7 @@ app.get('/contact', (req, res) => {
   res.sendFile(path.join(__dirname, 'contact.html'));
 });
 
-// Health check endpoint
+// Health check
 app.get('/health', (req, res) => {
   res.json({ 
     success: true,
@@ -72,8 +71,26 @@ app.get('/health', (req, res) => {
   });
 });
 
+// API root endpoint (optional)
+app.get('/api', (req, res) => {
+  res.json({
+    success: true,
+    message: 'RAJGym API is running',
+    endpoints: {
+      auth: {
+        register: 'POST /api/register',
+        login: 'POST /api/login',
+        profile: 'GET /api/me'
+      },
+      contact: {
+        submit: 'POST /api/contact',
+        getAll: 'GET /api/contact (admin)'
+      }
+    }
+  });
+});
+
 // ==================== ERROR HANDLERS ====================
-// 404 handler
 app.use((req, res) => {
   if (req.path.startsWith('/api')) {
     res.status(404).json({ 
@@ -85,7 +102,6 @@ app.use((req, res) => {
   }
 });
 
-// Global error handling middleware
 app.use((err, req, res, next) => {
   console.error('❌ Error:', err.stack);
   res.status(500).json({ 
@@ -105,5 +121,6 @@ const server = app.listen(PORT, () => {
   console.log(`📡 Port: ${PORT}`);
   console.log(`🌐 Frontend: https://newgymrepo.onrender.com`);
   console.log(`🔗 API: https://newgymrepo.onrender.com/api`);
+  console.log(`📧 Contact API: https://newgymrepo.onrender.com/api/contact`);
   console.log('=================================\n');
 });
